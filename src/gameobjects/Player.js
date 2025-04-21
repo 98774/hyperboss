@@ -1,102 +1,124 @@
-import { GameObjects, Physics } from "phaser";
-import { Bullet } from "./Bullet";
+import { ASSETS } from "../utils/constants.js";
 
-export class Player extends Physics.Arcade.Image {
-    
-    // Player states: waiting, start, can_move
-    state = "waiting";
-    propulsion_fire = null;
-    scene = null;
-    bullets = null;
+export default class Player extends Phaser.Physics.Arcade.Sprite {
+    constructor(scene, x, y) {
+        super(scene, x, y, ASSETS.PLAYER); // Use asset key from preloader
 
-    constructor({scene}) {
-        super(scene, -190, 100, "player");
-        this.scene = scene;
-        this.scene.add.existing(this);
-        this.scene.physics.add.existing(this);
+        scene.add.existing(this); // Add to scene's display list
+        scene.physics.add.existing(this); // Add to physics simulation
 
-        this.propulsion_fire = this.scene.add.sprite(this.x - 32, this.y, "propulsion-fire");
-        this.propulsion_fire.play("fire");
+        // --- Physics Properties ---
+        this.setCollideWorldBounds(true); // Prevent going off-screen (based on world bounds)
+        this.body.setGravityY(300); // Player is affected by gravity
+        this.body.setSize(this.width * 0.8, this.height * 0.9); // Adjust physics body size if needed
 
-        // Bullets group to create pool
-        this.bullets = this.scene.physics.add.group({
-            classType: Bullet,
-            maxSize: 100,
-            runChildUpdate: true
-        });
+        // --- Player Stats ---
+        this.hp = 100;
+        this.speed = 250;
+        this.jumpSpeed = 400; // Adjust jump strength
+        this.isAlive = true;
+
+        // --- State ---
+        this.isJumping = false;
+
+        console.log("Player initialized at", x, y);
     }
 
-    start() {
-        this.state = "start";
-        const propulsion_fires_trail = [];
+    update(cursors, actionKey) {
+        if (!this.isAlive) return;
 
-        // Effect to move the player from left to right
-        this.scene.tweens.add({
-            targets: this,
-            x: 200,
-            duration: 800,
-            delay: 1000,
-            ease: "Power2",
-            yoyo: false,
-            onUpdate: () => {
-                // Just a little trail FX
-                const propulsion = this.scene.add.sprite(this.x - 32, this.y, "propulsion-fire");
-                propulsion.play("fire");
-                propulsion_fires_trail.push(propulsion);
-            },
-            onComplete: () => {
-                // Destroy all the trail FX
-                propulsion_fires_trail.forEach((propulsion, i) => {
-                    this.scene.tweens.add({
-                        targets: propulsion,
-                        alpha: 0,
-                        scale: 0.5,
-                        duration: 200 + (i * 2),
-                        ease: "Power2",
-                        onComplete: () => {
-                            propulsion.destroy();
-                        }
-                    });
-                });
+        const body = this.body;
 
-                this.propulsion_fire.setPosition(this.x - 32, this.y);
+        // --- Movement ---
+        if (cursors.left.isDown) {
+            this.setVelocityX(-this.speed);
+            this.setFlipX(true); // Face left
+            // Add running animation later
+        } else if (cursors.right.isDown) {
+            this.setVelocityX(this.speed);
+            this.setFlipX(false); // Face right
+            // Add running animation later
+        } else {
+            this.setVelocityX(0);
+            // Add idle animation later
+        }
 
-                // When all tween are finished, the player can move
-                this.state = "can_move";
-            }
-        });
+        // --- Jumping ---
+        const onGround = body.blocked.down || body.touching.down;
+        if (onGround) {
+            this.isJumping = false; // Reset jump state when on ground
+        }
+
+        // Allow jump only if on ground and Up key is pressed
+        if (cursors.up.isDown && onGround) {
+            console.log("Player Jump");
+            this.setVelocityY(-this.jumpSpeed);
+            this.isJumping = true;
+            // Add jump animation later
+            // Play jump sound: this.scene.sound.play('jump_sound');
+        }
+
+        // --- Actions ---
+        if (Phaser.Input.Keyboard.JustDown(actionKey)) {
+            console.log("Player Action (Attack)");
+            // Implement attack logic (e.g., create projectile, play animation)
+            this.attack();
+        }
     }
 
-    move(direction) {
-        if(this.state === "can_move") {
-            if (direction === "up" && this.y - 10 > 0) {
-                this.y -= 5;
-                this.updatePropulsionFire();
-            } else if (direction === "down" && this.y + 75 < this.scene.scale.height) {
-                this.y += 5;
-                this.updatePropulsionFire();
+    attack() {
+        // Placeholder for attack logic
+        // Example: Create a projectile
+        // new Projectile(this.scene, this.x, this.y, this.flipX);
+        console.log("Player attacks!");
+
+        // Simple test: Check if boss exists and deal damage
+        if (this.scene.boss && this.scene.boss.active) {
+            // Check distance or overlap before damaging
+            const distance = Phaser.Math.Distance.Between(
+                this.x,
+                this.y,
+                this.scene.boss.x,
+                this.scene.boss.y,
+            );
+            if (distance < 100) {
+                // Example range check for melee
+                this.scene.boss.takeDamage(20); // Deal 20 damage
             }
         }
     }
 
-    fire(x, y) {
-        if (this.state === "can_move") {
-            // Create bullet
-            const bullet = this.bullets.get();
-            if (bullet) {
-                bullet.fire(this.x + 16, this.y + 5, x, y);
-            }
+    takeDamage(amount) {
+        if (!this.isAlive) return;
+
+        this.hp -= amount;
+        console.log(`Player HP: ${this.hp}`);
+        this.scene.events.emit("updatePlayerHP", this.hp); // Notify UI
+
+        if (this.hp <= 0) {
+            this.die();
+        } else {
+            // Add feedback like tinting red and brief invulnerability
+            this.scene.tweens.add({
+                targets: this,
+                alpha: 0.5,
+                duration: 100,
+                yoyo: true,
+                repeat: 2,
+            });
         }
     }
 
-    updatePropulsionFire() {
-        this.propulsion_fire.setPosition(this.x - 32, this.y);
+    die() {
+        console.log("Player Died");
+        this.isAlive = false;
+        this.setVelocity(0, 0); // Stop movement
+        this.setTint(0xff0000); // Turn red
+        // Could play death animation
+        this.scene.events.emit("playerDied"); // Notify GameScene
+        // Disable physics body after a short delay or animation
+        this.scene.time.delayedCall(500, () => {
+            // this.body.setEnable(false); // Fully disable physics
+        });
     }
-
-    update() {
-        // Sinusoidal movement up and down up and down 2px
-        this.y += Math.sin(this.scene.time.now / 200) * 0.10;
-        this.propulsion_fire.y = this.y;
-    }
-
 }
