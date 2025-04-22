@@ -1,3 +1,4 @@
+import BossExecutioner from "../gameobjects/BossExecutioner.js";
 import { SCENES, ASSETS } from "../utils/constants.js";
 
 export default class PreloaderScene extends Phaser.Scene {
@@ -52,78 +53,74 @@ export default class PreloaderScene extends Phaser.Scene {
         // Load all the assets
         this.load.setPath("assets");
         this.load.image(ASSETS.LOGO, "logo.png");
-        this.load.image(ASSETS.BACKGROUND_TECH, "backgrounds/background-tech.png");
+        this.load.image(
+            ASSETS.BACKGROUND_TECH,
+            "backgrounds/background-tech.png"
+        );
         this.load.image(ASSETS.PLATFORM, "platform.png");
         this.load.image(ASSETS.PLAYER, "player/player.png");
 
         // Set the base path for these assets (this line remains the same)
         this.load.setPath("assets/bosses/executioner/");
 
-        const FRAME_HEIGHT = 100;
-        const FRAME_WIDTH = 100;
+        this.load.spritesheet(ASSETS.EXECUTIONER_ATTACKING, "attacking.png", {
+            frameWidth: 100,
+            frameHeight: 100,
+        });
+
+        this.load.spritesheet(ASSETS.EXECUTIONER_DEATH, "death.png", {
+            frameWidth: 100,
+            frameHeight: 100,
+        });
+
+        this.load.spritesheet(ASSETS.EXECUTIONER_IDLE, "idle.png", {
+            frameWidth: 100,
+            frameHeight: 100,
+        });
+
+        this.load.spritesheet(ASSETS.EXECUTIONER_IDLE2, "idle2.png", {
+            frameWidth: 100,
+            frameHeight: 100,
+        });
+
+        this.load.spritesheet(ASSETS.EXECUTIONER_SKILL, "skill.png", {
+            frameWidth: 100,
+            frameHeight: 100,
+        });
+
+        this.load.spritesheet(ASSETS.EXECUTIONER_SUMMON, "summon.png", {
+            frameWidth: 100,
+            frameHeight: 100,
+        });
 
         this.load.spritesheet(
-            ASSETS.EXECUTIONER_ATTACKING,
-            "attacking.png", 
+            ASSETS.EXECUTIONER_SUMMON_APPEAR,
+            "summon_appear.png",
             {
-                frameWidth: 100, 
-                frameHeight: 100,
+                frameWidth: 50,
+                frameHeight: 50,
             }
         );
 
-        // this.load.spritesheet(ASSETS.EXECUTIONER_DEATH, "death.png", {
-        //     frameWidth: FRAME_WIDTH, // <<< REPLACE with actual width of one frame in death.png
-        //     frameHeight: FRAME_HEIGHT, // <<< REPLACE with actual height of one frame in death.png
-        // });
+        this.load.spritesheet(
+            ASSETS.EXECUTIONER_SUMMON_DEATH,
+            "summon_death.png",
+            {
+                frameWidth: 50,
+                frameHeight: 50,
+            }
+        );
 
-        // this.load.spritesheet(ASSETS.EXECUTIONER_IDLE, "idle.png", {
-        //     frameWidth: FRAME_WIDTH, // <<< REPLACE with actual width of one frame in idle.png
-        //     frameHeight: FRAME_HEIGHT, // <<< REPLACE with actual height of one frame in idle.png
-        // });
+        this.load.spritesheet(
+            ASSETS.EXECUTIONER_SUMMON_IDLE,
+            "summon_idle.png",
+            {
+                frameWidth: 50,
+                frameHeight: 50,
+            }
+        );
 
-        // this.load.spritesheet(ASSETS.EXECUTIONER_IDLE2, "idle2.png", {
-        //     frameWidth: FRAME_WIDTH, // <<< REPLACE with actual width of one frame in idle2.png
-        //     frameHeight: FRAME_HEIGHT, // <<< REPLACE with actual height of one frame in idle2.png
-        // });
-
-        // this.load.spritesheet(ASSETS.EXECUTIONER_SKILL, "skill.png", {
-        //     frameWidth: FRAME_WIDTH, // <<< REPLACE with actual width of one frame in skill.png
-        //     frameHeight: FRAME_HEIGHT, // <<< REPLACE with actual height of one frame in skill.png
-        // });
-
-        // this.load.spritesheet(ASSETS.EXECUTIONER_SUMMON, "summon.png", {
-        //     frameWidth: FRAME_WIDTH, // <<< REPLACE with actual width of one frame in summon.png
-        //     frameHeight: FRAME_HEIGHT, // <<< REPLACE with actual height of one frame in summon.png
-        // });
-
-        // this.load.spritesheet(
-        //     ASSETS.EXECUTIONER_SUMMON_APPEAR,
-        //     "summon_appear.png",
-        //     {
-        //         frameWidth: FRAME_WIDTH, // <<< REPLACE with actual width of one frame in summon_appear.png
-        //         frameHeight: FRAME_HEIGHT, // <<< REPLACE with actual height of one frame in summon_appear.png
-        //     }
-        // );
-
-        // this.load.spritesheet(
-        //     ASSETS.EXECUTIONER_SUMMON_DEATH,
-        //     "summon_death.png",
-        //     {
-        //         frameWidth: FRAME_WIDTH, // <<< REPLACE with actual width of one frame in summon_death.png
-        //         frameHeight: FRAME_HEIGHT, // <<< REPLACE with actual height of one frame in summon_death.png
-        //     }
-        // );
-
-        // this.load.spritesheet(
-        //     ASSETS.EXECUTIONER_SUMMON_IDLE,
-        //     "summon_idle.png",
-        //     {
-        //         frameWidth: FRAME_WIDTH, // <<< REPLACE with actual width of one frame in summon_idle.png
-        //         frameHeight: FRAME_HEIGHT, // <<< REPLACE with actual height of one frame in summon_idle.png
-        //     }
-        // );
-
-        // // Reset the path if you load assets from other directories afterwards
+        // Reset the path if you load assets from other directories afterwards
         this.load.setPath(); // Or set it to your default assets path
 
         // Event to update the loading bar

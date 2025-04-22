@@ -1,6 +1,7 @@
 import { SCENES, ASSETS, EVENTS } from "../utils/constants.js";
 import Player from "../gameobjects/Player.js";
 import Boss from "../gameobjects/BaseBoss.js";
+import BossExecutioner from "../gameobjects/BossExecutioner.js";
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -19,15 +20,11 @@ export default class GameScene extends Phaser.Scene {
         this.scene.launch(SCENES.UI, { gameScene: this }); // Pass reference if needed
 
         this.add.image(0, 0, ASSETS.BACKGROUND_TECH).setOrigin(0, 0);
-        this.add
-            .image(0, this.cameras.main.height - 100, ASSETS.PLATFORM)
-            .setOrigin(0, 0);
-
         // Create Player
         this.player = new Player(this, 200, this.cameras.main.height - 100); // Adjust start position
 
         // Create Boss (adjust position)
-        this.boss = new Boss(
+        this.boss = new BossExecutioner(
             this,
             this.cameras.main.width - 200,
             this.cameras.main.height - 150
@@ -100,6 +97,93 @@ export default class GameScene extends Phaser.Scene {
         });
 
         console.log("GameScene setup complete. Player and Boss created.");
+
+        console.log("Creating Executioner animations...");
+
+        // --- Executioner Idle Animation ---
+        // *** VERIFY frame numbers (start/end) based on your 'idle.png' sheet! ***
+        this.anims.create({
+            key: "exec_idle", // Matches ANIMS.IDLE in BossExecutioner
+            frames: this.anims.generateFrameNumbers(ASSETS.EXECUTIONER_IDLE, {
+                start: 0,
+                end: 3,
+            }),
+            frameRate: 8,
+            repeat: -1,
+        });
+
+        // *** VERIFY frame numbers based on your 'idle2.png' sheet! ***
+        this.anims.create({
+            key: "exec_idle2", // Matches ANIMS.IDLE2
+            frames: this.anims.generateFrameNumbers(ASSETS.EXECUTIONER_IDLE2, {
+                start: 0,
+                end: 7,
+            }), // ADJUST FRAMES
+            frameRate: 8,
+            repeat: -1,
+        });
+
+        // --- Executioner Attacking Animation ---
+        // *** VERIFY frame numbers based on your 'attacking.png' sheet! ***
+        // Based on your uploaded image, it has 13 frames (indices 0 to 12)
+        this.anims.create({
+            key: "exec_attack", // Matches ANIMS.ATTACK
+            frames: this.anims.generateFrameNumbers(
+                ASSETS.EXECUTIONER_ATTACKING,
+                { start: 0, end: 12 }
+            ), // ADJUST FRAMES
+            frameRate: 15, // Adjust speed
+            repeat: 0, // Play once
+        });
+
+        // --- Executioner Death Animation ---
+        // *** VERIFY frame numbers based on your 'death.png' sheet! ***
+        this.anims.create({
+            key: "exec_death", // Matches ANIMS.DEATH
+            frames: this.anims.generateFrameNumbers(ASSETS.EXECUTIONER_DEATH, {
+                start: 0,
+                end: 8,
+            }), // ADJUST FRAMES
+            frameRate: 10,
+            repeat: 0, // Play once
+        });
+
+        // --- Executioner Skill Animation ---
+        // *** VERIFY frame numbers based on your 'skill.png' sheet! ***
+        this.anims.create({
+            key: "exec_skill", // Matches ANIMS.SKILL
+            frames: this.anims.generateFrameNumbers(ASSETS.EXECUTIONER_SKILL, {
+                start: 0,
+                end: 10,
+            }), // ADJUST FRAMES
+            frameRate: 12,
+            repeat: 0,
+        });
+
+        // --- Executioner Summon Animation ---
+        // *** VERIFY frame numbers based on your 'summon.png' sheet! ***
+        this.anims.create({
+            key: "exec_summon", // Matches ANIMS.SUMMON
+            frames: this.anims.generateFrameNumbers(ASSETS.EXECUTIONER_SUMMON, {
+                start: 0,
+                end: 7,
+            }), // ADJUST FRAMES
+            frameRate: 12,
+            repeat: 0,
+        });
+
+        // --- Add animations for the SUMMONED UNIT's actions using their sheets ---
+        // Example:
+        // this.anims.create({
+        //     key: 'summoned_unit_idle',
+        //     frames: this.anims.generateFrameNumbers(ASSETS.EXECUTIONER_SUMMON_IDLE, { start: 0, end: 4 }), // ADJUST
+        //     frameRate: 6,
+        //     repeat: -1
+        // });
+        // ... add more for summon_appear, summon_death etc. These would be played on the
+        // separate sprite objects created for the summoned units, not the main boss.
+
+        console.log("Executioner animations created.");
     }
 
     update(time, delta) {

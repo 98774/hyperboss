@@ -12,6 +12,14 @@ export default class BaseBoss extends Phaser.Physics.Arcade.Sprite {
         // Basic state machine? e.g., this.state = 'idle';
     }
 
+    BOSS_STATES = {
+        IDLE: "idle",
+        ATTACK: "attack",
+        SUMMON: "summon",
+        TAKE_DAMAGE: "take-damage",
+        DEAD: "dead",
+    };
+
     takeDamage(amount) {
         if (!this.isAlive) return;
         this.hp -= amount;
@@ -27,7 +35,7 @@ export default class BaseBoss extends Phaser.Physics.Arcade.Sprite {
             });
         }
         console.log(
-            `${this.constructor.name} HP: <span class="math-inline">\{this\.hp\}/</span>{this.maxHp}`,
+            `${this.constructor.name} HP: <span class="math-inline">\{this\.hp\}/</span>{this.maxHp}`
         );
     }
 

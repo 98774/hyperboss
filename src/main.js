@@ -5,8 +5,8 @@ import UIScene from "./scenes/UIScene.js";
 
 const config = {
     type: Phaser.AUTO, // Automatically choose WebGL or Canvas
-    width: 1280, // Game width in pixels
-    height: 720, // Game height in pixels
+    width: 800, // Game width in pixels
+    height: 600, // Game height in pixels
     parent: "game-container", // ID of the div element to inject the canvas
     physics: {
         default: "arcade",
@@ -24,7 +24,6 @@ const config = {
         MainMenuScene,
         GameScene,
         UIScene,
-        // Add other scenes like GameOverScene later
     ],
 };
 
