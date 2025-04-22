@@ -1,4 +1,4 @@
-import { SCENES } from "../utils/constants.js";
+import { ASSETS, SCENES } from "../utils/constants.js";
 
 export default class MainMenuScene extends Phaser.Scene {
     constructor() {
@@ -7,21 +7,19 @@ export default class MainMenuScene extends Phaser.Scene {
 
     create() {
         console.log("MainMenuScene created");
-        // Add title
         this.add
-            .text(
+            .image(
                 this.cameras.main.centerX,
                 this.cameras.main.centerY - 100,
-                "BOSS RUSH GAME",
-                { fontSize: "48px", fill: "#fff" }
+                ASSETS.LOGO
             )
-            .setOrigin(0.5);
+            .setScale(0.5);
 
         // Add Start Button Text
         const startButton = this.add
             .text(
                 this.cameras.main.centerX,
-                this.cameras.main.centerY,
+                this.cameras.main.centerY + 150,
                 "Start Game",
                 { fontSize: "32px", fill: "#0f0" }
             )
@@ -41,6 +39,16 @@ export default class MainMenuScene extends Phaser.Scene {
             console.log("Starting game...");
             this.scene.start(SCENES.GAME); // Transition to GameScene
         });
+
+        const leaderboardButton = this.add
+            .text(
+                this.cameras.main.centerX,
+                this.cameras.main.centerY + 200,
+                "Leaderboards",
+                { fontSize: "32px", fill: "#0f0" }
+            )
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true }); // Make it interactive
 
         // TODO: Add Seed input field
         // TODO: Add Difficulty/Customization options

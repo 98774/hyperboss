@@ -122,15 +122,6 @@ export default class PreloaderScene extends Phaser.Scene {
 
         // Reset the path if you load assets from other directories afterwards
         this.load.setPath(); // Or set it to your default assets path
-
-        // Event to update the loading bar
-        this.load.on("progress", (progress) => {
-            console.log("Loading: " + Math.round(progress * 100) + "%");
-        });
-        // --- Load your assets here ---
-        // this.load.spritesheet('player_anim', 'assets/player_spritesheet.png', { frameWidth: 64, frameHeight: 64 });
-        // this.load.audio('jump_sound', 'assets/jump.wav');
-        // --- --- --- --- --- --- --- ---
     }
 
     create() {
