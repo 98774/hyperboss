@@ -29,10 +29,9 @@ export default class BossExecutioner extends BaseBoss {
             // Add keys for summon unit animations if they are part of this sheet, unlikely
         };
 
-        this.body.allowGravity = true; // Or false if the boss floats/doesn't use standard gravity
-        // Adjust hitbox - make sure this matches your new sprites
-        // Example: If frames are 100x100, adjust accordingly
-        this.body.setSize(30, 90).setOffset(10, 10); // <<< ADJUST these values based on your sprite visuals
+        this.body.allowGravity = false;
+        this.body.setSize(20, 80).setOffset(40, 10);
+        this.setScale(4);
 
         // --- State Management ---
         // Define states relevant to the Executioner
